@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="CountBits.cs" />
     <Compile Include="IntTriangles.cs" />
+    <Compile Include="Magnets.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="DuplicateCount.cs" />
     <Compile Include="ProdFib.cs" />
