@@ -51,6 +51,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="DuplicateCount.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimplePigLatin.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
