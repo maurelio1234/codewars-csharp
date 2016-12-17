@@ -13,37 +13,10 @@ namespace Codewars
 
       public static int DuplicateCount(string str)
       {
-            var orderedLowercase = str.ToLower().OrderBy(c => c);
-            var countDuplicates = 0;
-            var countOccurrenciesCurrentCharacter = 1;
-            char? previousElement = null;
-            var firstElement = true;
-
-            foreach(var currentElement in orderedLowercase)
-            {
-                if (firstElement)
-                {
-                    firstElement = false;
-                }
-                else
-                {
-                    if (currentElement == previousElement.Value)
-                    {
-                        countOccurrenciesCurrentCharacter ++;
-
-                        if (countOccurrenciesCurrentCharacter == 2)
-                        {
-                            countDuplicates ++;
-                        }
-                    }
-                    else
-                    {
-                        countOccurrenciesCurrentCharacter = 1;
-                    }
-                }
-                previousElement = currentElement;
-            }
-            return countDuplicates;
+            return str
+                .ToLower()
+                .GroupBy(c => c)
+                .Aggregate(0, (current, next) => current + (next.Count() > 1 ? 1 : 0));
       }
      
      [Test]
