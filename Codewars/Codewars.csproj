@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CountBits.cs" />
+    <Compile Include="Emirps.cs" />
     <Compile Include="IntTriangles.cs" />
     <Compile Include="Magnets.cs" />
     <Compile Include="Main.cs" />
