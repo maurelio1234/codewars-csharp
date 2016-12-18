@@ -10,89 +10,61 @@ namespace Codewars.Emirps
 
         public static long[] FindEmirp(long n)
         {
-            var result = ComputeEmirpsUpTo(n).Where(i => i < n);
-            return new long[]
+            var count = 0L;
+            var max = 0L;
+            var sum = 0L;
+
+            var nonPrimes = new HashSet<long>();
+
+            for(int i=2;i<n;i++)
             {
-                result.Count(),
-                result.Max(),
-                result.Sum()
-            };
-        }
-
-        private static long largestKnownEmirp = -1;
-        private static HashSet<long> memoizedEmirps = new HashSet<long>();
-
-        public static HashSet<long> ComputeEmirpsUpTo(long n)
-        {
-            var primes = GetPrimesThatMayBeEmirpsUpTo(n);
-            var emirps = memoizedEmirps;
-            var largestKnownEmirpBeforeFor = largestKnownEmirp;
-
-            foreach(var p in primes)
-            {
-                // avoid recomputing reverse and emirps
-                if (p>largestKnownEmirpBeforeFor && !emirps.Contains(p)) {
-                    long r = Reverse(p);
-
-                    // a emirp is a non-palindrome prime with a prime reverse
-                    if (p!=r && primes.Contains(r))
+                // ok, i is prime
+                if (!nonPrimes.Contains(i))
+                {
+                    // is it a emirp?
+                    var r = Reverse(i);
+                    if (r!=i && r%2!=0) // not a palindrome and reverse not even
+                                        // so, we have a chance
                     {
-                        emirps.Add(p);
-                        emirps.Add(r);
-
-                        // r is larger then p, otherwise we would have added it already when we found p
-                        largestKnownEmirp = Math.Max(largestKnownEmirp, r);
+                        var maxDivisor = Math.Sqrt(r);
+                        var isPrime = true;
+                        for(int k=3;k<=maxDivisor;k+=2)
+                        {
+                            if (r%k==0)
+                            {
+                                nonPrimes.Add(r); // we found a non prime
+                                isPrime = false;
+                                break;
+                            }
+                        }
+                        if (isPrime)
+                        {
+                            // is is an empirp!!
+                            sum += i;
+                            count += 1;
+                            max = Math.Max(max, i);
+                        }
+                    }
+                    // j = i*2,3,... = multiples of i, they are not prime
+                    for(int j=i*2;j<n;j+=i)
+                    {
+                        // we found out a non prime, it is a multiple of a prime
+                        if (!nonPrimes.Contains(j))
+                        {
+                            nonPrimes.Add(j);
+                        }
                     }
                 }
+                // remove smaller numbers from the set, to save memory
+                nonPrimes.Remove(i);
             }
-            return emirps;
-        }
 
-        private static HashSet<long> GetPrimesThatMayBeEmirpsUpTo(long n)
-        {
-            return SieveOfErasthostenes(GetMaxEmirpLessThan(n));
-        }
-
-        private static long largestKnownPrime = 7;
-        private static HashSet<long> memoizedPrimes = new HashSet<long>();
-
-        private static HashSet<long> SieveOfErasthostenes(long n)
-        {
-            // naive implementation of sieve or eratosthenes
-            var primes = memoizedPrimes;
-            primes.Add(2);
-            primes.Add(3);
-            primes.Add(5);
-            for (long i = largestKnownPrime; i < n; ++i)
+            return new long[]
             {
-                if (i % 2 != 0 && i % 3 != 0 && i % 5 != 0)
-                {
-                    primes.Add(i);
-                }
-            }
-            for (long i = 8; i < n; ++i)
-            {
-                if (primes.Contains(i))
-                {
-                    primes.RemoveWhere(e => e != i && e % i == 0);
-                    largestKnownPrime = Math.Max(largestKnownPrime, n);
-                }
-            }
-            return primes;
-        }
-
-        // returns the max number obtained by reversing numbers up to n
-        // naive implementation, generate a 99...99 with the same number of digits
-        // as n
-        private static long GetMaxEmirpLessThan(long n)
-        {
-            var r = 0;
-            while(n>0)
-            {
-                r = r * 10 + 9;
-                n /= 10;
-            }
-            return r;
+                count,
+                max,
+                sum
+            };
         }
 
         private static long Reverse(long l)
@@ -115,14 +87,14 @@ namespace Codewars.Emirps
         {
             return "[" + string.Join(", ", list) + "]";
         }
-        private static void testing(string actual, string expected)
+        private static void testing(long n, string actual, string expected)
         {
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected, actual, "n="+n);
         }
         public static void tests(long[] list1, long[][] results)
         {
             for (int i = 0; i < list1.Length; i++)
-                testing(EmirpsTests.Array2String(Emirps.FindEmirp(list1[i])), EmirpsTests.Array2String(results[i]));
+                testing(list1[i], EmirpsTests.Array2String(Emirps.FindEmirp(list1[i])), EmirpsTests.Array2String(results[i]));
             return;
         }
         [Test]
