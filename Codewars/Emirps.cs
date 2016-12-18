@@ -2,53 +2,110 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Codewars.Emirps
 {
     public class Emirps
     {
-        private static HashSet<long> knownEmirps = new HashSet<long>();
-        private static long largestEmirp = -1;
-        private static long largestPrime = -1;
-
-        public static void UpdateEmirps(long n)
-        {
-            if (largestPrime == -1)
-            {
-               // generate all primes from 2 to n
-            } else
-            {
-                // generate all primes from largestPrime to n
-            }
-
-            // remove all non emirp from the list :)
-            
-            // merge new list with old list
-            // update lastPrime & largestEmirp
-
-        }
 
         public static long[] FindEmirp(long n)
         {
-            UpdateEmirps(n);
-            var result = knownEmirps.Where(i => i < n);
-            if (result.Count() == 0)
+            var result = ComputeEmirpsUpTo(n).Where(i => i < n);
+            return new long[]
             {
-                return new long[] { 0, 0, 0 };
-            }
-            else
-            {
-                return new long[]
-                {
-                    result.Count(),
-                    result.Max(),
-                    result.Sum()
-                };
-            }
-
+                result.Count(),
+                result.Max(),
+                result.Sum()
+            };
         }
+
+        private static long largestKnownEmirp = -1;
+        private static HashSet<long> memoizedEmirps = new HashSet<long>();
+
+        public static HashSet<long> ComputeEmirpsUpTo(long n)
+        {
+            var primes = GetPrimesThatMayBeEmirpsUpTo(n);
+            var emirps = memoizedEmirps;
+            var largestKnownEmirpBeforeFor = largestKnownEmirp;
+
+            foreach(var p in primes)
+            {
+                // avoid recomputing reverse and emirps
+                if (p>largestKnownEmirpBeforeFor && !emirps.Contains(p)) {
+                    long r = Reverse(p);
+
+                    // a emirp is a non-palindrome prime with a prime reverse
+                    if (p!=r && primes.Contains(r))
+                    {
+                        emirps.Add(p);
+                        emirps.Add(r);
+
+                        // r is larger then p, otherwise we would have added it already when we found p
+                        largestKnownEmirp = Math.Max(largestKnownEmirp, r);
+                    }
+                }
+            }
+            return emirps;
+        }
+
+        private static HashSet<long> GetPrimesThatMayBeEmirpsUpTo(long n)
+        {
+            return SieveOfErasthostenes(GetMaxEmirpLessThan(n));
+        }
+
+        private static long largestKnownPrime = 7;
+        private static HashSet<long> memoizedPrimes = new HashSet<long>();
+
+        private static HashSet<long> SieveOfErasthostenes(long n)
+        {
+            // naive implementation of sieve or eratosthenes
+            var primes = memoizedPrimes;
+            primes.Add(2);
+            primes.Add(3);
+            primes.Add(5);
+            for (long i = largestKnownPrime; i < n; ++i)
+            {
+                if (i % 2 != 0 && i % 3 != 0 && i % 5 != 0)
+                {
+                    primes.Add(i);
+                }
+            }
+            for (long i = 8; i < n; ++i)
+            {
+                if (primes.Contains(i))
+                {
+                    primes.RemoveWhere(e => e != i && e % i == 0);
+                    largestKnownPrime = Math.Max(largestKnownPrime, n);
+                }
+            }
+            return primes;
+        }
+
+        // returns the max number obtained by reversing numbers up to n
+        // naive implementation, generate a 99...99 with the same number of digits
+        // as n
+        private static long GetMaxEmirpLessThan(long n)
+        {
+            var r = 0;
+            while(n>0)
+            {
+                r = r * 10 + 9;
+                n /= 10;
+            }
+            return r;
+        }
+
+        private static long Reverse(long l)
+        {
+            var r = 0L;
+            while(l>0)
+            {
+                r = r * 10 + l % 10;
+                l /= 10;
+            }
+            return r;
+        }
+
     }
 
     [TestFixture]
@@ -69,7 +126,7 @@ namespace Codewars.Emirps
             return;
         }
         [Test]
-        public static void test1()
+        public static void EmirpsTest()
         {
             Console.WriteLine("Basic Tests FindEmirp");
             long[] l = new long[] { 50, 100, 200, 500, 750, 1000 };
