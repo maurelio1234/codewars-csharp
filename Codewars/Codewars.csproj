@@ -57,6 +57,7 @@
     <Compile Include="ProdFib.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RotateArray.cs" />
+    <Compile Include="Runes.cs" />
     <Compile Include="SimplePigLatin.cs" />
   </ItemGroup>
   <ItemGroup>
