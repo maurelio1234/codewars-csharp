@@ -10,19 +10,31 @@ namespace Codewars.Dioph
         public static string solEquaStr(long n)
         {
             var solutions = new List<Tuple<long, long>>();
-            var minx = (long)Math.Sqrt(n) - 1;
-            var maxx = (n / 2) + 2;
+            var maxa = (long)Math.Sqrt(n);
 
-            maxx += n % 2 + maxx % 2;
-            for(long x=maxx;x>=minx;x--)
+            // iterate over divisors of n
+            for(long a=1;a<=maxa;++a)
             {
-                var y = (long)Math.Sqrt((n - x * x) / -4.0d);
-
-                if ((x - 2 * y) * (x + 2 * y) == n)
+                if (n%a==0)
                 {
-                    solutions.Add(Tuple.Create(x, y));
-                    x /= 2;
-                    x += n % 2 + x % 2;
+                    var b = n / a;
+                    // n = a*b
+                    // a=x+2y b=x-2y
+                    // x = a-2y
+                    // b = a-2y-2y = a-4y
+                    // y = (b-a)/-4
+                    var y0 = (b - a) / -4;
+                    var x0 = a - 2 * y0;
+                    if (((x0+2*y0)*(x0-2*y0) == n) && x0>=0 && y0>=0)
+                    {
+                        solutions.Add(Tuple.Create(x0, y0));
+                    }
+                    var y1 = (a - b) / -4;
+                    var x1 = b - 2 * y1;
+                    if (a!=b && ((x1+2*y1)*(x1-2*y1) == n) && x1>=0 && y1>=0)
+                    {
+                        solutions.Add(Tuple.Create(x1, y1));
+                    }
                 }
             }
             return "[" 
