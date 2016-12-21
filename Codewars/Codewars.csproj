@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Convert.cs" />
     <Compile Include="CountBits.cs" />
     <Compile Include="Dioph.cs" />
     <Compile Include="Emirps.cs" />
