@@ -62,6 +62,7 @@
     <Compile Include="RotateArray.cs" />
     <Compile Include="Runes.cs" />
     <Compile Include="SimplePigLatin.cs" />
+    <Compile Include="SumDigNth.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
