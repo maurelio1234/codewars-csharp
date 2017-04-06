@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Convert.cs" />
     <Compile Include="CountBits.cs" />
+    <Compile Include="DblLinear.cs" />
     <Compile Include="Dioph.cs" />
     <Compile Include="Emirps.cs" />
     <Compile Include="IntPart.cs" />
